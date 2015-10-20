@@ -49,6 +49,7 @@ public class MainActivity extends ActionBarActivity {
 
             //пример определения ProductID устройства
             lgView.setText( lgView.getText() + "\n" + "Device ProductID: " + device.getProductId() );
+            lgView.setText( lgView.getText() + "\n" + "Device VendorID: " + device.getVendorId() );
         }
         //определяем намерение, описанное в фильтре
         // намерений AndroidManifest.xml
