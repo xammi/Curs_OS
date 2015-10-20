@@ -1,4 +1,4 @@
-obj-m := fortune-lkm.o 
+obj-m := usb_module.o 
 KDIR  := /lib/modules/$(shell uname -r)/build
 PWD   := $(shell pwd)
 

@@ -7,5 +7,11 @@
 
 .idea/
 *.iml
+
 *.o
 *.ko
+.tmp_versions/
+*.order
+*.symvers
+*.cmd
+*.mod.*
