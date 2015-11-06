@@ -15,8 +15,8 @@ MODULE_AUTHOR("Kislenko Maksim");
 //-------------------------------------------------------------------------------------------------
 
 #define MY_DEVICE_NAME "phone_usb_device"
-#define PRODUCT_ID 0x1
-#define VENDOR_ID 0x1234
+#define PRODUCT_ID 0x6860
+#define VENDOR_ID 0x04e8
 
 static struct usb_device_id phone_table [] = {
     { USB_DEVICE(VENDOR_ID, PRODUCT_ID) },
@@ -53,8 +53,10 @@ struct usb_phone
     struct mutex io_mutex; // synchronous IO mutex to ensure
 };
 
-static struct usb_driver phone_driver;
+#define to_phone_dev(d) container_of(d, struct usb_phone, kref)
 
+
+static struct usb_driver phone_driver;
 
 static void phone_delete(struct kref *kref) 
 {
@@ -102,6 +104,9 @@ static int phone_open(struct inode *inode, struct file *file)
     }
 
     file->private_data = dev;
+
+    retval = phone_write();
+    
     return 0;
 }
 
@@ -127,6 +132,8 @@ static int phone_release(struct inode *inode, struct file *file)
 
 static ssize_t phone_read(struct file *file, char *buffer, size_t count, loff_t *ppos)
 {
+    printk(KERN_INFO "%s: start", __FUNCTION__);
+
     struct usb_phone *dev;
     int bytes_read;
     int retval;
@@ -162,7 +169,7 @@ static ssize_t phone_read(struct file *file, char *buffer, size_t count, loff_t 
     return retval;
 }
 
-static void phone_write_bulk_callback(struct urb *urb, struct pt_regs *regs) {
+static void phone_write_bulk_callback(struct urb *urb) {
     struct usb_phone *dev;
     dev = (struct usb_phone *) urb->context;
 
@@ -182,6 +189,8 @@ static void phone_write_bulk_callback(struct urb *urb, struct pt_regs *regs) {
 
 static ssize_t phone_write(struct file *file, const char *user_buffer, size_t count, loff_t *ppos)
 {   
+    printk(KERN_INFO "%s: start", __FUNCTION__);
+
     struct usb_phone *dev;
     struct urb *urb = NULL;
     int retval = 0;
@@ -296,8 +305,8 @@ static int phone_probe(struct usb_interface *interface, const struct usb_device_
 
     /* Allocate memory for our device state and initialize it */
     dev = kzalloc(sizeof(*dev), GFP_KERNEL); // allocated memory device status and initialize
-    if (dev) {
-        printk(KERN_ERR "Out of memory\n");
+    if (! dev) {
+        printk(KERN_ERR "%s: Out of memory\n", __FUNCTION__);
         goto error;
     }
 
