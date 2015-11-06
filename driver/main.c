@@ -5,15 +5,14 @@
 #include <stdio.h>
 #include <string.h>
 
-#define filename "usb-SAMSUNG_SAMSUNG_Android_4dfc1f0c037250fb-if01"
-
 int main(void) {
 	int fd;
 	ssize_t count;
 	char buf[50];
 
 	/* open device */
-	if ((fd = open("/dev/serial/by-id/" filename, O_RDWR)) < 0) {
+	fd = open("/dev/phone_1", O_RDWR|O_TRUNC, 0644);
+	if (fd < 0) {
 		perror("open()");
 		return 1;
 	}

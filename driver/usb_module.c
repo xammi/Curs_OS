@@ -7,6 +7,7 @@
 #include <asm/uaccess.h>
 #include <linux/usb.h>
 #include <linux/mutex.h>
+#include <linux/pm_runtime.h>
 
 MODULE_LICENSE("GPL");
 MODULE_DESCRIPTION("USB controller for mouse");
@@ -77,7 +78,7 @@ static int phone_open(struct inode *inode, struct file *file)
     mutex_lock(&phone_open_lock);
 
     interface = usb_find_interface(&phone_driver, subminor);
-    if (interface) {
+    if (! interface) {
         mutex_unlock(&phone_open_lock);
 
         printk(KERN_ERR "%s: error, can't find device for minor%d\n", __FUNCTION__, subminor);
@@ -85,7 +86,7 @@ static int phone_open(struct inode *inode, struct file *file)
     }
 
     dev = usb_get_intfdata(interface);
-    if (dev) {
+    if (! dev) {
         mutex_unlock(&phone_open_lock);
         return -ENODEV;
     }
@@ -100,13 +101,11 @@ static int phone_open(struct inode *inode, struct file *file)
     retval = usb_autopm_get_interface(interface);
     if (retval) {
         kref_put(&dev->kref, phone_delete);
+        printk(KERN_ERR "%s: error, can't get interface ret=%d\n", __FUNCTION__, retval);
         return retval;
     }
 
     file->private_data = dev;
-
-    retval = phone_write();
-    
     return 0;
 }
 
@@ -132,11 +131,11 @@ static int phone_release(struct inode *inode, struct file *file)
 
 static ssize_t phone_read(struct file *file, char *buffer, size_t count, loff_t *ppos)
 {
-    printk(KERN_INFO "%s: start", __FUNCTION__);
-
     struct usb_phone *dev;
     int bytes_read;
     int retval;
+
+    printk(KERN_INFO "%s: start", __FUNCTION__);
 
     dev = (struct usb_phone *) file->private_data;
 
@@ -189,14 +188,15 @@ static void phone_write_bulk_callback(struct urb *urb) {
 
 static ssize_t phone_write(struct file *file, const char *user_buffer, size_t count, loff_t *ppos)
 {   
-    printk(KERN_INFO "%s: start", __FUNCTION__);
-
     struct usb_phone *dev;
     struct urb *urb = NULL;
     int retval = 0;
     char *buf = NULL;
     
     size_t writesize = min(count, (size_t) MAX_TRANSFER);
+
+    printk(KERN_INFO "%s: start", __FUNCTION__);
+
     dev = (struct usb_phone *) file->private_data;
 
     /* Verify that we actually have some data to write */
@@ -362,6 +362,12 @@ static int phone_probe(struct usb_interface *interface, const struct usb_device_
         printk(KERN_ERR "Not able to get a minor for this device.\n");
         usb_set_intfdata(interface, NULL);
         goto error;
+    }
+
+    if (! phone_driver.supports_autosuspend) {
+        phone_driver.supports_autosuspend = 1;
+        pm_runtime_enable(&dev->udev->dev);
+        printk(KERN_INFO "%s: set autosuspend\n", __FUNCTION__);
     }
 
     /* Let the user know what node this device is now attached to */
