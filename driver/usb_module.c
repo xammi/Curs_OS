@@ -144,6 +144,7 @@ static ssize_t phone_read(struct file *file, char *buffer, size_t count, loff_t 
     if (! dev->interface) {
         /* disconnect () was called */
         mutex_unlock(&dev->io_mutex);
+        printk(KERN_ERR "%s: interface not found\n", __FUNCTION__);
         return -ENODEV;
     }
 
@@ -158,10 +159,15 @@ static ssize_t phone_read(struct file *file, char *buffer, size_t count, loff_t 
     if (retval) {
         if (copy_to_user(buffer, dev->bulk_in_buffer, bytes_read)) {
             retval = -EFAULT;
+            printk(KERN_ERR "%s: cannot copy to user\n", __FUNCTION__);
         }
         else {
             retval = bytes_read;
+            printk(KERN_INFO "%s: successfully\n", __FUNCTION__);
         }
+    }
+    else {
+        printk(KERN_ERR "%s: cannot read data. ret=%d\n", __FUNCTION__, retval);
     }
 
     mutex_unlock(&dev->io_mutex);
@@ -195,36 +201,42 @@ static ssize_t phone_write(struct file *file, const char *user_buffer, size_t co
     
     size_t writesize = min(count, (size_t) MAX_TRANSFER);
 
-    printk(KERN_INFO "%s: start", __FUNCTION__);
+    printk(KERN_INFO "%s: start\n", __FUNCTION__);
 
     dev = (struct usb_phone *) file->private_data;
 
     /* Verify that we actually have some data to write */
-    if (count == 0)
+    if (count == 0) {
+        printk(KERN_ERR "%s: no data to write\n", __FUNCTION__);
         return 0;
+    }
 
     /* Limit the number of URBs in flight to stop a user from using up all RAM */
     if (down_interruptible(&dev->limit_sem)) {
+        printk(KERN_ERR "%s: limit of URBs in flight achieved\n", __FUNCTION__);
         return -ERESTARTSYS;
     }
 
-    /* Create a urb, and give it to allocate a buffer */ 
+    /* Create an urb, and give it to allocate a buffer */ 
     urb = usb_alloc_urb(0, GFP_KERNEL);
-    if (urb) {
+    if (! urb) {
         retval = -ENOMEM;
+        printk(KERN_ERR "%s: cannot allocate urb buffer\n", __FUNCTION__);
         goto error;
     }
 
     /* Create a DMA buffer after the urb been successfully allocated, but also to transmit data 
        in an efficient manner to the device, the data is passed to the driver to be copied to this buffer */
     buf = usb_alloc_coherent(dev->udev, writesize, GFP_KERNEL, &urb->transfer_dma);
-    if (buf) {
+    if (! buf) {
         retval = -ENOMEM;
+        printk(KERN_ERR "%s: cannot allocate dma buffer\n", __FUNCTION__);
         goto error;
     }
 
     if (copy_from_user(buf, user_buffer, writesize)) {
         retval = -EFAULT;
+        printk(KERN_ERR "%s: cannot copy data from user\n", __FUNCTION__);
         goto error;
     }
 
@@ -235,6 +247,7 @@ static ssize_t phone_write(struct file *file, const char *user_buffer, size_t co
         /* Disconnect () was called */
         mutex_unlock(&dev->io_mutex);
         retval = -ENODEV;
+        printk(KERN_ERR "%s: interface not found\n", __FUNCTION__);
         goto error;
     }
 
@@ -258,6 +271,7 @@ static ssize_t phone_write(struct file *file, const char *user_buffer, size_t co
 
     /* Release our reference to this urb, the USB core will eventually free it entirely */
     usb_free_urb(urb);
+    printk(KERN_INFO "%s: successfully\n", __FUNCTION__);
     return writesize;
 
 error:
