@@ -21,7 +21,7 @@ abstract public class ConnectService extends IntentService {
     public static void startActionClick(Context context, Button button) {
         Intent intent = new Intent(context, SocketService.class);
         intent.setAction(ACTION_CLICK);
-        intent.putExtra(EXTRA_BUTTON, button);
+        intent.putExtra(EXTRA_BUTTON, button.name());
         context.startService(intent);
     }
 

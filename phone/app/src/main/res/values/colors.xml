@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="DemoKitTextWhite">#FFF</color>
+    <color name="green">#ff09aa1d</color>
+    <color name="cyan">#ff62d1ff</color>
+    <color name="white">#ffffff</color>
 </resources>

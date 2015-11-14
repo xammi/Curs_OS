@@ -1,0 +1,133 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    tools:context="bmstu.curs_os.SettingsActivity">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="?attr/actionBarSize"
+        android:background="@color/cyan"
+        theme="@style/ThemeOverlay.AppCompat.ActionBar">
+    </android.support.v7.widget.Toolbar>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_marginTop="42dp"
+        android:id="@+id/options">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Connection type"
+            android:id="@+id/lbl_type"
+            android:layout_marginTop="50dp"
+            android:textSize="26dp"
+            android:textIsSelectable="false"
+            android:textStyle="bold"
+            android:layout_marginLeft="30dp" />
+
+        <RadioGroup xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <RadioButton
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Socket"
+                android:id="@+id/type_socket"
+                android:layout_below="@+id/toolbar"
+                android:layout_alignParentStart="true"
+                android:layout_marginStart="49dp"
+                android:layout_marginTop="20dp"
+                android:checked="true"
+                android:layout_marginLeft="50dp"
+                android:textSize="22dp"
+                android:onClick="onRadioButtonClicked"/>
+
+            <RadioButton
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="USB"
+                android:id="@+id/type_usb"
+                android:checked="false"
+                android:layout_marginLeft="50dp"
+                android:layout_marginTop="20dp"
+                android:textSize="22dp"
+                android:onClick="onRadioButtonClicked"/>
+        </RadioGroup>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Socket settings"
+            android:id="@+id/lbl_socket"
+            android:layout_gravity="left|center_horizontal"
+            android:layout_marginTop="30dp"
+            android:layout_marginLeft="30dp"
+            android:textSize="26dp"
+            android:textStyle="bold" />
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/lay_host"
+            android:weightSum="1"
+            android:layout_marginLeft="40dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginRight="20dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Host"
+                android:id="@+id/lbl_host"
+                android:textSize="22dp"
+                android:layout_marginRight="20dp" />
+
+            <EditText
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/edt_host"
+                android:textSize="22dp"
+                android:layout_weight="0.88"
+                android:text="192.168.0.1"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/lay_port"
+            android:layout_marginLeft="40dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginRight="20dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Port"
+                android:id="@+id/lbl_port"
+                android:textSize="22dp"
+                android:layout_marginRight="20dp" />
+
+            <EditText
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:ems="10"
+                android:id="@+id/edt_port"
+                android:textSize="22dp"
+                android:text="8000" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+</RelativeLayout>
