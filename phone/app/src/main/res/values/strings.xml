@@ -1,10 +1,11 @@
 <resources>
     <string name="app_name">Curs_OS</string>
     <string name="action_settings">Settings</string>
+    <string name="title_activity_main">MainActivity</string>
 
-    <string name="no_device">Please connect a USB AccessoryController.</string>
-    <string name="button_connect">Tap Here To Connect</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="title_activity_settings">SettingsActivity</string>
 
-    <string name="off">Off</string>
-    <string name="on">On</string>
+<!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
