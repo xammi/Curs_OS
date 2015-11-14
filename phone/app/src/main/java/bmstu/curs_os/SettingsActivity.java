@@ -41,9 +41,9 @@ public class SettingsActivity extends ActionBarActivity {
         });
 
         SharedPreferences settings = getSharedPreferences(getResources().getString(R.string.prefs_file), 0);
-        type = ConnectType.valueOf(settings.getString("type", "socket"));
-        host = settings.getString("host", "192.168.0.1");
-        port = settings.getInt("port", 8000);
+        type = ConnectType.valueOf(settings.getString("type", ConnectType.SOCKET.name()));
+        host = settings.getString("host", getResources().getString(R.string.default_host));
+        port = settings.getInt("port", getResources().getInteger(R.integer.default_port));
         setEditListeners();
     }
 

@@ -8,4 +8,6 @@
     <string name="menu_to_settings">Go to settings</string>
 
     <string name="prefs_file">CursOsPrefs</string>
+    <string name="default_host">192.168.43.194</string>
+    <integer name="default_port">8081</integer>
 </resources>

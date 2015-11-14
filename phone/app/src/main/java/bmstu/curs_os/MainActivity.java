@@ -1,6 +1,9 @@
 package bmstu.curs_os;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -8,6 +11,9 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
+
+import bmstu.curs_os.services.ConnectService;
 import bmstu.curs_os.services.SocketService;
 import bmstu.curs_os.services.UsbService;
 
@@ -28,6 +34,14 @@ public class MainActivity extends ActionBarActivity {
 
         SharedPreferences settings = getSharedPreferences(getResources().getString(R.string.prefs_file), 0);
         type = ConnectType.valueOf(settings.getString("type", ConnectType.SOCKET.name()));
+
+        registerReceiver(connectReceiver, new IntentFilter(ConnectService.ACTION_RESPONSE));
+    }
+
+    @Override
+    protected void onDestroy() {
+        unregisterReceiver(connectReceiver);
+        super.onDestroy();
     }
 
     @Override
@@ -77,4 +91,12 @@ public class MainActivity extends ActionBarActivity {
                 break;
         }
     }
+
+    private BroadcastReceiver connectReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String message = intent.getStringExtra(ConnectService.EXTRA_MSG);
+            Toast.makeText(MainActivity.this, message, Toast.LENGTH_SHORT).show();
+        }
+    };
 }

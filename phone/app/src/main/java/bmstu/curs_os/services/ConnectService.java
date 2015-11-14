@@ -17,6 +17,9 @@ abstract public class ConnectService extends IntentService {
     private static final String EXTRA_BUTTON = "bmstu.curs_os.services.extra.BUTTON";
     private static final String EXTRA_VECTOR = "bmstu.curs_os.services.extra.VECTOR";
 
+    public static final String ACTION_RESPONSE = "bmstu.curs_os.services.action.RESPONSE";
+    public static final String EXTRA_MSG = "bmstu.curs_os.services.extra.MSG";
+
 
     public static void startActionClick(Context context, Button button) {
         Intent intent = new Intent(context, SocketService.class);
@@ -63,4 +66,11 @@ abstract public class ConnectService extends IntentService {
     public abstract void handleClick(Button button);
     public abstract void handleGyro(String vector);
     public abstract void handleSwipe(String vector);
+
+    protected void sendResponse(String message) {
+        Intent intentResponse = new Intent();
+        intentResponse.setAction(ACTION_RESPONSE);
+        intentResponse.putExtra(EXTRA_MSG, message);
+        sendBroadcast(intentResponse);
+    }
 }
