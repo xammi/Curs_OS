@@ -2,6 +2,7 @@ package bmstu.curs_os;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -40,7 +41,7 @@ public class SettingsActivity extends ActionBarActivity {
             }
         });
 
-        SharedPreferences settings = getSharedPreferences(getResources().getString(R.string.prefs_file), 0);
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
         type = ConnectType.valueOf(settings.getString("type", ConnectType.SOCKET.name()));
         host = settings.getString("host", getResources().getString(R.string.default_host));
         port = settings.getInt("port", getResources().getInteger(R.integer.default_port));
@@ -50,7 +51,7 @@ public class SettingsActivity extends ActionBarActivity {
     @Override
     protected void onStop() {
         super.onStop();
-        SharedPreferences settings = getSharedPreferences(getResources().getString(R.string.prefs_file), 0);
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
         SharedPreferences.Editor editor = settings.edit();
 
         editor.putString("type", type.name());

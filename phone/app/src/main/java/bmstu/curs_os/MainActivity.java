@@ -9,6 +9,7 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -53,7 +54,7 @@ public class MainActivity extends ActionBarActivity {
         toolbar.setLogo(R.drawable.cursor_new);
         toolbar.setTitleTextColor(getResources().getColor(android.R.color.white));
 
-        SharedPreferences settings = getSharedPreferences(getResources().getString(R.string.prefs_file), 0);
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
         type = ConnectType.valueOf(settings.getString("type", ConnectType.SOCKET.name()));
 
         registerReceiver(connectReceiver, new IntentFilter(ConnectService.ACTION_RESPONSE));

@@ -1,14 +1,11 @@
 package bmstu.curs_os.services;
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
-import android.widget.Toast;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
-import java.io.DataOutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.InetAddress;
