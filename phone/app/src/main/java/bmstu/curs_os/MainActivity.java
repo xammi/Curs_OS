@@ -29,7 +29,7 @@ public class MainActivity extends ActionBarActivity {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        toolbar.setLogo(R.drawable.cursor);
+        toolbar.setLogo(R.drawable.cursor_new);
         toolbar.setTitleTextColor(getResources().getColor(android.R.color.white));
 
         SharedPreferences settings = getSharedPreferences(getResources().getString(R.string.prefs_file), 0);

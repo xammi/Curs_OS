@@ -44,21 +44,18 @@ class SocketWrapper:
     	self.sock.close()
 
 
-def server():
+def server(log_file):
 	sw = SocketWrapper()
 	sw.bind('', 9090)
 
-	print 'Socket listens'
+	print 'Server started'
 
 	while True:
 		connect, address = sw.sock.accept()
 		client = SocketWrapper(connect)
-
-		print 'connected:', address
-
 		data = client.receive()
 		if data:
-			print data
+			log_file.write(data + '\n')
 
 	sw.close()
 
@@ -66,21 +63,19 @@ def server():
 def client():
 	sw = SocketWrapper()
 	sw.connect('localhost', 9090)
-	print 'Connected'
-
 	sw.send('Hello server')
-	print 'Sending ...'
-
 	sw.close()
 
 
 def main():
 	if len(sys.argv) > 1:
 		if sys.argv[1] == 'server':
-			server()
+			with open('log.txt') as log_file:
+				server(log_file)
 		elif sys.argv[1] == 'client':
 			client()
 		else:
 			print 'Unknown argument (%s)' % sys.argv[1]
 
-main()
+if __name__ == '__main__':
+	main()
