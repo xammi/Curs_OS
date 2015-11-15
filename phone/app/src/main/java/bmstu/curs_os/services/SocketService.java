@@ -35,18 +35,34 @@ public class SocketService extends ConnectService {
     }
 
     public void handleClick(Button button) {
+        Socket socket = null;
+        PrintWriter out = null;
         try {
             InetAddress hostAddress = InetAddress.getByName(host);
-            Socket socket = new Socket(hostAddress, port);
-            PrintWriter out = new PrintWriter(new BufferedWriter(
-                    new OutputStreamWriter(socket.getOutputStream())),
-                    true);
+            socket = new Socket(hostAddress, port);
+            out = new PrintWriter(new BufferedWriter(
+                  new OutputStreamWriter(socket.getOutputStream())),
+                  true);
 
             String command = "click:" + button.name();
             out.println(command);
+            out.flush();
         }
         catch (IOException e) {
             sendResponse(e.toString());
+        }
+        finally {
+            try {
+                if (socket != null) {
+                    socket.close();
+                }
+                if (out != null) {
+                    out.close();
+                }
+            }
+            catch (IOException e) {
+                sendResponse(e.toString());
+            }
         }
     }
 

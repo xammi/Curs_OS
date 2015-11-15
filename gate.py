@@ -1,10 +1,16 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 import socket
 import sys
+
+MSGLEN = 1024
+
 
 class SocketWrapper:
     def __init__(self, sock=None):
         if sock is None:
-            self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            self.sock = socket.socket()
         else:
             self.sock = sock
 
@@ -17,18 +23,19 @@ class SocketWrapper:
 
     def send(self, msg):
         total_sent = 0
-        while total_sent <= len(msg):
+        while total_sent < MSGLEN:
             sent = self.sock.send(msg[total_sent:])
             if sent == 0:
-                raise RuntimeError("socket connection broken")
+                break
             total_sent += sent
 
     def receive(self):
         chunks = []
         bytes_recd = 0
-        chunk = self.sock.recv(2048)
-        while chunk != '':
-            chunk = self.sock.recv(2048)
+        while bytes_recd < MSGLEN:
+            chunk = self.sock.recv(min(MSGLEN - bytes_recd, 2048)).decode()
+            if chunk == '':
+            	break
             chunks.append(chunk)
             bytes_recd += len(chunk)
         return ''.join(chunks)
@@ -39,14 +46,15 @@ class SocketWrapper:
 
 def server():
 	sw = SocketWrapper()
-	sw.bind('localhost', 8081)
+	sw.bind('', 9090)
 
 	print 'Socket listens'
 
 	while True:
 		connect, address = sw.sock.accept()
 		client = SocketWrapper(connect)
-		print 'Client: %s' % address
+
+		print 'connected:', address
 
 		data = client.receive()
 		if data:
@@ -57,10 +65,10 @@ def server():
 
 def client():
 	sw = SocketWrapper()
-	sw.connect('localhost', 8081)
-	print 'Connecting ...'
+	sw.connect('localhost', 9090)
+	print 'Connected'
 
-	sw.send('Hello')
+	sw.send('Hello server')
 	print 'Sending ...'
 
 	sw.close()
@@ -68,11 +76,11 @@ def client():
 
 def main():
 	if len(sys.argv) > 1:
-		if sys.args[0] == 'server':
+		if sys.argv[1] == 'server':
 			server()
-		elif sys.args[0] == 'client':
+		elif sys.argv[1] == 'client':
 			client()
 		else:
-			print 'Unknown argument'
+			print 'Unknown argument (%s)' % sys.argv[1]
 
 main()

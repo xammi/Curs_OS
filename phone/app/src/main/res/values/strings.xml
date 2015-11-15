@@ -9,5 +9,5 @@
 
     <string name="prefs_file">CursOsPrefs</string>
     <string name="default_host">192.168.43.194</string>
-    <integer name="default_port">8081</integer>
+    <integer name="default_port">9090</integer>
 </resources>
