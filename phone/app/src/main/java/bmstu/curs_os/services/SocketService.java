@@ -79,6 +79,6 @@ public class SocketService extends ConnectService {
 
     public void handleSwipe(String vector) {
         String command = "scroll:" + vector + ";";
-        sendToHost(command, true);
+        sendToHost(command, false);
     }
 }

@@ -15,7 +15,9 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import bmstu.curs_os.services.ConnectService;
@@ -70,6 +72,14 @@ public class MainActivity extends ActionBarActivity {
 
             }
         }, mSensor, SensorManager.SENSOR_DELAY_NORMAL);
+
+        ListView touchArea = (ListView) findViewById(R.id.swipe_view);
+        touchArea.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                return MainActivity.this.onSwipeEvent(event);
+            }
+        });
     }
 
     @Override
@@ -195,5 +205,41 @@ public class MainActivity extends ActionBarActivity {
                 UsbService.startActionGyro(MainActivity.this, vector);
                 break;
         }
+    }
+
+    Float prevX = null;
+    Float prevY = null;
+
+    public boolean onSwipeEvent(MotionEvent event) {
+        float x = event.getX();
+        float y = event.getY();
+
+        if (prevX != null && prevY != null)
+        switch (event.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                break;
+            case MotionEvent.ACTION_MOVE:
+
+                float deltaX = prevX - x;
+                float deltaY = prevY - y;
+                String vector = Float.toString(deltaX) + "," + deltaY;
+
+                switch (type) {
+                    case SOCKET:
+                        SocketService.startActionSwipe(MainActivity.this, vector);
+                        break;
+                    case USB:
+                        UsbService.startActionSwipe(MainActivity.this, vector);
+                        break;
+                }
+
+                break;
+            case MotionEvent.ACTION_UP:
+            case MotionEvent.ACTION_CANCEL:
+                break;
+        }
+        prevX = x;
+        prevY = y;
+        return true;
     }
 }
