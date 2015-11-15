@@ -3,6 +3,7 @@
 
 import socket
 import sys
+import signal
 
 MSGLEN = 1024
 
@@ -55,7 +56,8 @@ def server(log_file):
 		client = SocketWrapper(connect)
 		data = client.receive()
 		if data:
-			log_file.write(data + '\n')
+			log_file.write(data)
+			log_file.flush()
 
 	sw.close()
 
@@ -70,12 +72,13 @@ def client():
 def main():
 	if len(sys.argv) > 1:
 		if sys.argv[1] == 'server':
-			with open('log.txt') as log_file:
+			with open('log.txt', 'wb') as log_file:
 				server(log_file)
 		elif sys.argv[1] == 'client':
 			client()
 		else:
 			print 'Unknown argument (%s)' % sys.argv[1]
+
 
 if __name__ == '__main__':
 	main()

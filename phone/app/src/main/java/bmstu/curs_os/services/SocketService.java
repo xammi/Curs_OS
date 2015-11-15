@@ -34,22 +34,22 @@ public class SocketService extends ConnectService {
         return super.onStartCommand(intent, flags, startId);
     }
 
-    public void handleClick(Button button) {
+    private void sendToHost(String command, boolean withReports) {
         Socket socket = null;
         PrintWriter out = null;
         try {
             InetAddress hostAddress = InetAddress.getByName(host);
             socket = new Socket(hostAddress, port);
             out = new PrintWriter(new BufferedWriter(
-                  new OutputStreamWriter(socket.getOutputStream())),
-                  true);
+                    new OutputStreamWriter(socket.getOutputStream())),
+                    true);
 
-            String command = "click:" + button.name();
             out.println(command);
             out.flush();
         }
         catch (IOException e) {
-            sendResponse(e.toString());
+            if (withReports)
+                sendResponse(e.toString());
         }
         finally {
             try {
@@ -61,16 +61,24 @@ public class SocketService extends ConnectService {
                 }
             }
             catch (IOException e) {
-                sendResponse(e.toString());
+                if (withReports)
+                    sendResponse(e.toString());
             }
         }
     }
 
+    public void handleClick(Button button) {
+        String command = "click:" + button.name() + ";";
+        sendToHost(command, true);
+    }
+
     public void handleGyro(String vector) {
-        // TODO: Handle action Baz
+        String command = "gyro:" + vector + ";";
+        sendToHost(command, false);
     }
 
     public void handleSwipe(String vector) {
-        // TODO: Handle action Baz
+        String command = "scroll:" + vector + ";";
+        sendToHost(command, true);
     }
 }
