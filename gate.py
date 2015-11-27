@@ -78,6 +78,8 @@ def main():
 			client()
 		else:
 			print 'Unknown argument (%s)' % sys.argv[1]
+	else:
+		print 'This script needs one parameter (server|client)'
 
 
 if __name__ == '__main__':

@@ -52,19 +52,19 @@ static ssize_t write_vm(struct device *dev,
         input_report_rel(vm_input_dev, REL_X, x);
         input_report_rel(vm_input_dev, REL_Y, y);
     }
-    else if (command == MOUSE_LEFT_BTN) {
+    else if (command == MOUSE_BTN_LEFT) {
         input_report_key(vm_input_dev, BTN_LEFT, MOUSE_KEY_PRESSED);
         input_report_key(vm_input_dev, BTN_LEFT, MOUSE_KEY_RELEASED);
     }
-    else if (command == MOUSE_RIGHT_BTN) {
+    else if (command == MOUSE_BTN_RIGHT) {
         input_report_key(vm_input_dev, BTN_RIGHT, MOUSE_KEY_PRESSED);
         input_report_key(vm_input_dev, BTN_RIGHT, MOUSE_KEY_RELEASED);
     }
-    else if (command == MOUSE_MIDDLE_BTN) {
+    else if (command == MOUSE_BTN_MIDDLE) {
         input_report_key(vm_input_dev, BTN_MIDDLE, MOUSE_KEY_PRESSED);
         input_report_key(vm_input_dev, BTN_MIDDLE, MOUSE_KEY_RELEASED);
     }
-    else if (command == MOUSE_EXTRA_BTN) {
+    else if (command == MOUSE_BTN_EXTRA) {
         input_report_key(vm_input_dev, BTN_EXTRA, MOUSE_KEY_PRESSED);
         input_report_key(vm_input_dev, BTN_EXTRA, MOUSE_KEY_RELEASED);
     }  
@@ -123,7 +123,12 @@ static int __init init_mouse_module(void) {
     input_set_abs_params(vm_input_dev, ABS_Y, 0, 0, 0, 0);
   
     // Register with the input subsystem
-    input_register_device(vm_input_dev);
+    retval = input_register_device(vm_input_dev);
+    if (retval) {
+        input_free_device(vm_input_dev);
+        printk(KERN_ERR "%s: input_register_device() error\n", __FUNCTION__);
+        return retval;
+    }
 
     printk(KERN_INFO "Virtual mouse driver initialized.\n");
     return 0;
@@ -141,4 +146,4 @@ static void cleanup_mouse_module(void) {
 }
 
 module_init(init_mouse_module);
-module_exit(cleanup_usb_module);
+module_exit(cleanup_mouse_module);

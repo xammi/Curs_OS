@@ -41,7 +41,7 @@ public class MainActivity extends ActionBarActivity {
     private static final float NS2S = 1.0f / 1000000000.0f;
     private static final float EPSILON = 0.1f;
 
-    private final float[] deltaRotationVector = new float[4];
+    private final float[] deltaRotationVector = new float[3];
     private float timestamp;
 
     @Override
@@ -162,23 +162,11 @@ public class MainActivity extends ActionBarActivity {
                 axisY /= omegaMagnitude;
                 axisZ /= omegaMagnitude;
 
-                float thetaOverTwo = omegaMagnitude * dT / 2.0f;
-                float sinThetaOverTwo = sin(thetaOverTwo);
-                float cosThetaOverTwo = cos(thetaOverTwo);
+                deltaRotationVector[0] = axisX;
+                deltaRotationVector[1] = axisY;
+                deltaRotationVector[2] = axisZ;
 
-                deltaRotationVector[0] = sinThetaOverTwo * axisX;
-                deltaRotationVector[1] = sinThetaOverTwo * axisY;
-                deltaRotationVector[2] = sinThetaOverTwo * axisZ;
-                deltaRotationVector[3] = cosThetaOverTwo;
-
-                float[] deltaRotationMatrix = new float[9];
-                SensorManager.getRotationMatrixFromVector(deltaRotationMatrix, deltaRotationVector);
-
-                // User code should concatenate the delta rotation we computed with the current rotation
-                // in order to get the updated rotation.
-                // rotationCurrent = rotationCurrent * deltaRotationMatrix;
-
-                String vector = matrixToString(deltaRotationMatrix);
+                String vector = matrixToString(deltaRotationVector);
                 sendGyroDelta(vector);
             }
         }
