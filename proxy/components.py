@@ -5,7 +5,7 @@ from exceptions import *
 
 MSG_LEN = 1024
 DEFAULT_PORT = 9090
-DEFAULT_DEV_PATH = '/dev/input/mouse1'
+DEFAULT_DEV_PATH = './device.txt' # '/dev/input/mouse1'
 DEFAULT_LOG_PATH = './log.txt'
 
 
@@ -56,12 +56,18 @@ class MouseDriver:
 
     def __init__(self, device_name=DEFAULT_DEV_PATH):
         self.device = open(device_name, 'w')
+        self.X = 100
+        self.Y = 100
 
     def _gyro_to_coords(self, args):
         if len(args) != 3:
             raise InvalidGyroArgs(args)
-        # interpret gyro
-        return 0, 0
+        dX = float(args[0])
+        dY = float(args[1])
+
+        self.X += dX
+        self.Y += dY
+        return self.X, self.Y
 
     def write(self, command, args):
         if command not in self.CommandMap:
@@ -71,8 +77,9 @@ class MouseDriver:
         if command == 'click':
             if len(args) != 1:
                 raise InvalidMouseArgs(args)
+            button = args[0]
 
-            code = codes[args]
+            code = codes[button]
             record = '%s:0,0' % code
         else:
             code = codes
@@ -82,10 +89,11 @@ class MouseDriver:
 
                 record = '%s:%s,%s' % (code, args[0], args[1])
             else:
-                x, y = self._gyro_to_coords(args)
-                record = '%s:%s,%s' % (code, x, y)
+                X, Y = self._gyro_to_coords(args)
+                record = '%s:%s,%s' % (code, X, Y)
 
         self.device.write(record)
+        self.device.flush()
 
     def __del__(self):
         if self.device:
@@ -104,7 +112,7 @@ class Server:
         if len(data_parts) == 2:
             command, args_str = data_parts
             args = args_str.split(',')
-            self.driver.write(command, args)
+            self.driver.write(command.strip(), args.strip())
         else:
             raise InvalidCommand(data)
 

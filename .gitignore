@@ -18,3 +18,4 @@
 
 build/
 proxy/log.txt
+proxy/device.txt
