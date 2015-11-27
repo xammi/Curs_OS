@@ -65,17 +65,17 @@ public class SocketService extends ConnectService {
     }
 
     public void handleClick(Button button) {
-        String command = "click:" + button.name() + ";";
+        String command = "click:" + button.name();
         sendToHost(command, true);
     }
 
     public void handleGyro(String vector) {
-        String command = "gyro:" + vector + ";";
+        String command = "gyro:" + vector;
         sendToHost(command, false);
     }
 
     public void handleSwipe(String vector) {
-        String command = "scroll:" + vector + ";";
+        String command = "scroll:" + vector;
         sendToHost(command, false);
     }
 }

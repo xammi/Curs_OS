@@ -44,3 +44,12 @@ class InvalidScrollArgs(Exception):
 
     def __str__(self):
         return 'Invalid scroll args (%s). Expected 2 floats' % self.params
+
+
+class DeviceWriteError(Exception):
+    def __init__(self, status, *args, **kwargs):
+        super(Exception, self).__init__(*args, **kwargs)
+        self.status = status
+
+    def __str__(self):
+        return 'Device can not be written (%s)' % self.status

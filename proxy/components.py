@@ -1,11 +1,12 @@
 # encoding: utf-8
 
 import socket
+import os
 from exceptions import *
 
 MSG_LEN = 1024
 DEFAULT_PORT = 9090
-DEFAULT_DEV_PATH = './device.txt' # '/dev/input/mouse1'
+DEFAULT_DEV_PATH = '/sys/devices/platform/virtual_mouse/coordinates'
 DEFAULT_LOG_PATH = './log.txt'
 
 
@@ -55,7 +56,7 @@ class MouseDriver:
     }
 
     def __init__(self, device_name=DEFAULT_DEV_PATH):
-        self.device = open(device_name, 'w')
+        self.device = os.open(device_name, os.O_RDWR)
         self.X = 100
         self.Y = 100
 
@@ -92,12 +93,15 @@ class MouseDriver:
                 X, Y = self._gyro_to_coords(args)
                 record = '%s:%s,%s' % (code, X, Y)
 
-        self.device.write(record)
-        self.device.flush()
+        written_bytes = os.write(self.device, record)
+        if written_bytes <= 0:
+        	raise DeviceWriteError(written_bytes)
+
+        # os.flush(self.device)
 
     def __del__(self):
         if self.device:
-            self.device.close()
+            os.close(self.device)
 
 
 class Server:
@@ -111,8 +115,10 @@ class Server:
         data_parts = data.split(':')
         if len(data_parts) == 2:
             command, args_str = data_parts
+            command = command.strip()
+            args_str = args_str.strip()
             args = args_str.split(',')
-            self.driver.write(command.strip(), args.strip())
+            self.driver.write(command, args)
         else:
             raise InvalidCommand(data)
 
