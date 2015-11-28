@@ -66,9 +66,16 @@ class MouseDriver:
         dX = float(args[0])
         dY = float(args[1])
 
-        self.X += dX
-        self.Y += dY
+        self.X += round(dX * 10)
+        self.Y += round(dY * 10)
         return self.X, self.Y
+
+    def _scroll_to_coords(self, args):
+        if len(args) != 2:
+            raise InvalidScrollArgs(args)
+        X = round(float(args[0]) * 10)
+        Y = round(float(args[1]) * 10)
+        return X, Y
 
     def write(self, command, args):
         if command not in self.CommandMap:
@@ -85,10 +92,8 @@ class MouseDriver:
         else:
             code = codes
             if command == 'scroll':
-                if len(args) != 2:
-                    raise InvalidScrollArgs(args)
-
-                record = '%s:%s,%s' % (code, args[0], args[1])
+                X, Y = self._scroll_to_coords(args)
+                record = '%s:%s,%s' % (code, X, Y)
             else:
                 X, Y = self._gyro_to_coords(args)
                 record = '%s:%s,%s' % (code, X, Y)

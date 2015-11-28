@@ -44,7 +44,7 @@ static ssize_t write_vm(struct device *dev,
     int command = 0;
     sscanf(buffer, "%d:%d,%d", &command, &x, &y);
     
-    printk(KERN_INFO "write %d", command);
+    printk(KERN_INFO "write %d, %d, %d\n", command, x, y);
 
     if (command == MOUSE_MOVE) {
         input_report_abs(vm_input_dev, ABS_X, x);
