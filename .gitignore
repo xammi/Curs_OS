@@ -15,6 +15,7 @@
 *.symvers
 *.cmd
 *.mod.*
+*.pyc
 
 build/
 proxy/log.txt
