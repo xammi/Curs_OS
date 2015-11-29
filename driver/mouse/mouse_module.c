@@ -116,6 +116,14 @@ static int __init init_mouse_module(void) {
         return -ENOMEM;
     }
 
+    set_bit(EV_ABS, vm_input_dev->evbit);
+    set_bit(ABS_X, vm_input_dev->absbit);
+    set_bit(ABS_Y, vm_input_dev->absbit);
+
+    set_bit(EV_KEY, vm_input_dev->evbit);
+    set_bit(BTN_LEFT, vm_input_dev->keybit);
+    set_bit(BTN_RIGHT, vm_input_dev->keybit);
+
     vm_input_dev->evbit[0] = BIT_MASK(EV_KEY) | BIT_MASK(EV_ABS) | BIT_MASK(EV_REL);
     vm_input_dev->keybit[BIT_WORD(BTN_MOUSE)] = BIT_MASK(BTN_LEFT) | BIT_MASK(BTN_RIGHT) | BIT_MASK(BTN_MIDDLE) | BIT_MASK(BTN_EXTRA);
     vm_input_dev->relbit[0] = BIT_MASK(REL_X) | BIT_MASK(REL_Y);

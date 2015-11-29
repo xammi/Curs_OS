@@ -11,7 +11,7 @@ int main(void) {
 	char buf[50];
 
 	/* open device */
-	fd = open("/sys/devices/platform/vms/coordinates", O_RDWR|O_TRUNC, 0644);
+	fd = open("/sys/devices/platform/virtual_mouse/coordinates", O_RDWR|O_TRUNC, 0644);
 	if (fd < 0) {
 		perror("open()");
 		return 1;
@@ -19,7 +19,7 @@ int main(void) {
 
 	/* write to device */
 	memset(buf, 0x00, sizeof(buf));   /* clear buffer */
-	strcpy(buf, "7 100 300");
+	strcpy(buf, "1:100,300");
 	count = write(fd, buf, sizeof(buf));
 	printf("Written %d bytes to device\n", (int) count);
 
