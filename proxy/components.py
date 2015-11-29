@@ -66,15 +66,15 @@ class MouseDriver:
         dX = float(args[0])
         dY = float(args[1])
 
-        self.X += round(dX * 10)
-        self.Y += round(dY * 10)
+        self.X += int(round(dX * 10))
+        self.Y += int(round(dY * 10))
         return self.X, self.Y
 
     def _scroll_to_coords(self, args):
         if len(args) != 2:
             raise InvalidScrollArgs(args)
-        X = round(float(args[0]) * 10)
-        Y = round(float(args[1]) * 10)
+        X = int(round(float(args[0]) * 10))
+        Y = int(round(float(args[1]) * 10))
         return X, Y
 
     def write(self, command, args):
@@ -100,7 +100,7 @@ class MouseDriver:
 
         written_bytes = os.write(self.device, record)
         if written_bytes <= 0:
-        	raise DeviceWriteError(written_bytes)
+            raise DeviceWriteError(written_bytes)
 
         # os.flush(self.device)
 
