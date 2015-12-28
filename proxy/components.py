@@ -2,12 +2,28 @@
 
 import socket
 import os
+from subprocess import call
 from exceptions import *
 
 MSG_LEN = 1024
 DEFAULT_PORT = 9090
+
 DEFAULT_DEV_PATH = '/sys/devices/platform/virtual_mouse/coordinates'
-DEFAULT_LOG_PATH = './log.txt'
+DEFAULT_LOG_PATH = 'logs/log.txt'
+DEFAULT_MODULE_PATH = 'modules/mouse_module.ko'
+DEFAULT_MODULE_NAME = 'mouse_module'
+
+
+def ins_kernel_module():
+    result_code = call(['insmod', DEFAULT_MODULE_PATH])
+    if result_code != 0:
+        raise InsertModuleError(result_code)
+
+
+def rm_kernel_module():
+    result_code = call(['rmmod', DEFAULT_MODULE_NAME])
+    if result_code != 0:
+        raise RemoveModuleError(result_code)
 
 
 class SocketWrapper:
@@ -104,7 +120,7 @@ class MouseDriver:
 
         # os.flush(self.device)
 
-    def __del__(self):
+    def close(self):
         if self.device:
             os.close(self.device)
 
@@ -142,7 +158,7 @@ class Server:
                     self.log_file.write('Exception: %s\n' % str(e))
                     self.log_file.flush()
 
-    def __del__(self):
+    def stop(self):
         self.sw.close()
         if self.log_file:
             self.log_file.close()
@@ -156,5 +172,5 @@ class Client:
     def send(self, message):
         self.sw.send(message)
 
-    def __del__(self):
+    def close(self):
         self.sw.close()

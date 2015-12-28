@@ -115,6 +115,9 @@ static int __init init_mouse_module(void) {
         printk(KERN_ERR "%s: input_alloc_device() error\n", __FUNCTION__);
         return -ENOMEM;
     }
+    vm_input_dev->name = "vm_name";
+    vm_input_dev->phys = "vm_phys";
+    vm_input_dev->uniq = "vm_uniq";
 
     set_bit(EV_ABS, vm_input_dev->evbit);
     set_bit(ABS_X, vm_input_dev->absbit);

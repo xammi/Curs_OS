@@ -53,3 +53,20 @@ class DeviceWriteError(Exception):
 
     def __str__(self):
         return 'Device can not be written (%s)' % self.status
+
+
+class InsertModuleError(Exception):
+    def __init__(self, result_code, *args, **kwargs):
+        super(Exception, self).__init__(*args, **kwargs)
+        self.result_code = result_code
+
+    def __str__(self):
+        return 'Error during inserting module (code=%s)' % self.result_code
+
+class RemoveModuleError(Exception):
+    def __init__(self, result_code, *args, **kwargs):
+        super(Exception, self).__init__(*args, **kwargs)
+        self.result_code = result_code
+
+    def __str__(self):
+        return 'Error during removing module (code=%s)' % self.result_code

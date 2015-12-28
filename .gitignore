@@ -18,5 +18,4 @@
 *.pyc
 
 build/
-proxy/log.txt
-proxy/device.txt
+proxy/logs/
